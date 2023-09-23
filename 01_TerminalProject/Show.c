@@ -100,6 +100,11 @@ int main(int argc, char **argv)
 		num_lines = end;
 	fseek(file, 0, SEEK_SET);
 	plines = calloc(num_lines, sizeof(*plines));
+	if (!plines) {
+		perror("Couldn't allocate memory");
+		fclose(file);
+		exit(1);
+	}
 	read_lines(file, plines, num_lines);
 
 	printw("File name: %s", argv[1]);
