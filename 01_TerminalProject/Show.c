@@ -76,32 +76,32 @@ int main(int argc, char **argv)
 	size_t st, end;
 	size_t st_col = 0;
 
-	initscr();
-	noecho();
-	cbreak();
-
 	if (argc != 2) {
-		perror("One argument (file name) required");
+		printf("One argument (file name) required\n");
 		exit(1);
 	}
 
 	file = fopen(argv[1], "r");
 	if (!file) {
-		char *errbuf = malloc(sizeof(argv[1]));
-		snprintf(errbuf, strlen(argv[1]), "%s", argv[1]);
-		perror(errbuf);
-		free(errbuf);
+		perror(argv[1]);
 		exit(1);
 	}
+
+	initscr();
+	noecho();
+	cbreak();
+
 	num_lines = count_num_lines(file);
 	st = 0;
 	end = WLINES;
 	if (num_lines < end)
 		num_lines = end;
+
 	fseek(file, 0, SEEK_SET);
 	plines = calloc(num_lines, sizeof(*plines));
 	if (!plines) {
 		perror("Couldn't allocate memory");
+		endwin();
 		fclose(file);
 		exit(1);
 	}
@@ -151,6 +151,9 @@ int main(int argc, char **argv)
 			if (st >= WLINES) {
 				st -= WLINES;
 				end -= WLINES;
+			} else {
+				st = 0;
+				end = WLINES;
 			}
 			break;
 		default:
