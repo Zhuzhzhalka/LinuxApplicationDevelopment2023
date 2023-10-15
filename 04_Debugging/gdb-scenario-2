@@ -1,0 +1,21 @@
+set pagination off
+set $count=1
+
+break range.c:21
+command 1
+	if $count >= 28 && $count <= 35
+		echo @@@
+		print start
+		echo @@@
+		print end
+		echo @@@
+		print step
+		echo @@@
+		print i
+	end
+	set $count=$count+1
+	continue
+end
+
+run -100 100 3 > /dev/null
+quit

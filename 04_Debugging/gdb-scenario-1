@@ -1,0 +1,19 @@
+set pagination off
+
+break range.c:21
+command 1
+	if i % 5 == 0
+		echo @@@
+		print start
+		echo @@@
+		print end
+		echo @@@
+		print step
+		echo @@@
+		print i
+	end
+	continue
+end
+
+run 1 12 > /dev/null
+quit
