@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 
 	if (argc != 3) {
 		fprintf(stderr, "Usage: ./move infile outfile\n");
-		return 1;
+		return err;
 	}
 
 	infile = argv[1];
@@ -30,18 +30,21 @@ int main(int argc, char **argv)
 	infd = open(infile, O_RDONLY);
 	if (infd == -1) {
 		perror("Failed to open infile");
+		err = 2;
 		goto err_open_infd;
 	}
 
 	outfd = open(outfile, O_RDWR | O_TRUNC | O_CREAT, S_IRWXU);
 	if (outfd == -1) {
 		perror("Failed to open outfile");
+		err = 3;
 		goto err_open_outfd;
 	}
 
 	buf = malloc(BUF_SIZE * sizeof(*buf));
 	if (!buf) {
 		perror("Failed to allocate buffer");
+		err = 4;
 		goto err_alloc_buf;
 	}
 
@@ -49,10 +52,12 @@ int main(int argc, char **argv)
 		int ret_write = write(outfd, buf, read_bytes);
 		if (ret_write == -1) {
 			perror("Failed to write data to outfile");
+			err = 5;
 			goto err_write_outfd;
 		} else if (ret_write < read_bytes) {
 			if (lseek(infd, ret_write - read_bytes, SEEK_CUR) == -1) {
 				perror("Failed to execute lseek inside infile");
+				err = 6;
 				goto err_lseek;
 			}
 		}
@@ -60,36 +65,36 @@ int main(int argc, char **argv)
 
 	if (read_bytes == -1) {
 		perror("Failed to read from infile");
+		err = 7;
 		goto err_read;
 	}
 
-	if (remove(infile) == -1) {
-		perror("Failed to remove infile");
-		goto err_remove;
-	}
-
 	err = 0;
-err_remove:
 err_read:
 err_lseek:
 err_write_outfd:
 	if (err && remove(outfile) == -1) {
 		perror("Failed to remove outfile");
-		err = 1;
+		err = 8;
 	}
 	free(buf);
 err_alloc_buf:
 	if (close(outfd) == -1) {
 		perror("Failed to close outfile");
-		err = 1;
+		err = 9;
 	}
 err_open_outfd:
 	if (close(infd) == -1) {
 		perror("Failed to close infile");
-		err = 1;
+		err = 10;
+	}
+
+	if (!err && remove(infile) == -1) {
+		perror("Failed to remove infile");
+		err = 11;
 	}
 err_open_infd:
 	if (err)
-		return 1;
+		return err;
 	return 0;
 }

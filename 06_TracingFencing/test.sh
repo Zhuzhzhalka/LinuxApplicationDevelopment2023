@@ -4,43 +4,43 @@ echo "Starting tests..."
 
 # Test 1
 echo "something${TEST_COUNTER}" > infile
-strace -e trace=openat -e fault=openat:error=EACCESS:when=3 ./move infile outfile > /dev/null 2>&1
-test $? -eq 1 && test -f infile || echo "Test ${TEST_COUNTER} failed."
+strace -e trace=openat -e fault=openat:error=EACCES:when=3 ./move infile outfile > /dev/null 2>&1
+test $? -eq 2 && test -f infile || echo "Test ${TEST_COUNTER} failed."
 rm -f infile outfile
 TEST_COUNTER=$((TEST_COUNTER + 1))
 
 # Test 2
 echo "something${TEST_COUNTER}" > infile
 strace -e trace=openat -e fault=openat:error=EROFS:when=4 ./move infile outfile > /dev/null 2>&1
-test $? -eq 1 && test -f infile || echo "Test ${TEST_COUNTER} failed."
+test $? -eq 3 && test -f infile || echo "Test ${TEST_COUNTER} failed."
 rm -f infile outfile
 TEST_COUNTER=$((TEST_COUNTER + 1))
 
 # Test 3
 cat move.c > infile
 strace -e trace=read -e fault=read:error=EIO:when=4 ./move infile outfile > /dev/null 2>&1
-test $? -eq 1 && test -f infile || echo "Test ${TEST_COUNTER} failed."
+test $? -eq 7 && test -f infile || echo "Test ${TEST_COUNTER} failed."
 rm -f infile outfile
 TEST_COUNTER=$((TEST_COUNTER + 1))
 
 # Test 4
 echo "something${TEST_COUNTER}" > infile
 strace -e trace=read -e fault=read:error=EINTR:when=2 ./move infile outfile > /dev/null 2>&1
-test $? -eq 1 && test -f infile || echo "Test ${TEST_COUNTER} failed."
+test $? -eq 7 && test -f infile || echo "Test ${TEST_COUNTER} failed."
 rm -f infile outfile
 TEST_COUNTER=$((TEST_COUNTER + 1))
 
 # Test 5
 echo "something${TEST_COUNTER}" > infile
-strace -e trace=write -e fault=write:error=EACCESS:when=1 ./move infile outfile > /dev/null 2>&1
-test $? -eq 1 && test -f infile || echo "Test ${TEST_COUNTER} failed."
+strace -e trace=write -e fault=write:error=EACCES:when=1 ./move infile outfile > /dev/null 2>&1
+test $? -eq 5 && test -f infile || echo "Test ${TEST_COUNTER} failed."
 rm -f infile outfile
 TEST_COUNTER=$((TEST_COUNTER + 1))
 
 # Test 6
 echo "something${TEST_COUNTER}" > infile
-strace -e trace=close -e fault=close:error=EINTR:when=3,4 ./move infile outfile > /dev/null 2>&1
-test $? -eq 1 && test -f infile || echo "Test ${TEST_COUNTER} failed."
+strace -e trace=close -e fault=close:error=EINTR:when=3 ./move infile outfile > /dev/null 2>&1
+test $? -eq 9 && test -f infile || echo "Test ${TEST_COUNTER} failed."
 rm -f infile outfile
 TEST_COUNTER=$((TEST_COUNTER + 1))
 
