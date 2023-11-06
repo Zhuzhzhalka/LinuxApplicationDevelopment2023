@@ -1,0 +1,13 @@
+Installation:
+
+$ cd 07_Environmental
+$ autoreconf --install && \
+  aclocal && \
+  automake --gnu --add-missing && \
+  autoconf && \
+  ./configure [--enable-readline] && \
+  make
+
+Clean generates:
+
+$ make clean

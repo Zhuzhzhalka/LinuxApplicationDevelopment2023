@@ -1,0 +1,9 @@
+rhasher - simple REPL-based hash utility
+
+Please refer to INSTALL for installing instructions.
+
+Usage:
+
+$ ./rhasher
+> [HASH_ALGO] [STRING/FILENAME]
+...
