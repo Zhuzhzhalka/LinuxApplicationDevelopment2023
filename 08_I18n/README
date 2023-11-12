@@ -1,0 +1,17 @@
+num_guesser
+
+Make sure to have automake, gettext and intltool installed.
+
+Installation:
+
+$ cd 08_I18n
+$ autoreconf --install --force && \
+  aclocal && \
+  automake --add-missing && \
+  autoconf && \
+  ./configure && \
+  make
+
+Usage:
+
+$ ./src/num_guesser
