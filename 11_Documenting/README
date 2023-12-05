@@ -1,0 +1,18 @@
+num_guesser
+
+Make sure to have automake, gettext and intltool installed.
+
+Installation:
+
+$ sudo apt install automake gettext intltool
+$ cd 11_Documenting
+$ autoreconf --install --force && \
+  aclocal && \
+  automake --add-missing && \
+  autoconf && \
+  ./configure && \
+  make
+
+Docs:
+
+$ python3 -m http.server -d doxygen-doc/html <port>
